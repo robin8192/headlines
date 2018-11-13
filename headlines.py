@@ -8,7 +8,7 @@ RSS_FEEDS = {'bbc': 'http://feeds.bbci.co.uk/news/rss.xml',
              'fox': 'http://feeds.foxnews.com/foxnews/latest',
              'iol': 'http://www.iol.co.za/cmlink/1.640'}
 
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 
 # @app.route("/<publication>")
 
@@ -18,7 +18,7 @@ RSS_FEEDS = {'bbc': 'http://feeds.bbci.co.uk/news/rss.xml',
 #     return render_template("home.html", articles=feed['entries'])
 
 def get_news():
-    query = request.args.get("publication")
+    query = request.form.get("publication")
     if not query or query.lower() not in RSS_FEEDS:
         publication = "bbc"
     else:
