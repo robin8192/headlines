@@ -4,6 +4,7 @@ import json, urllib
 
 import datetime
 from flask import make_response
+from urllib.request import urlopen
 
 
 app = Flask(__name__)
@@ -78,8 +79,12 @@ def get_weather(query):
     api_url = URLS['weather_url']
     query = urllib.parse.quote(query)
     url = api_url.format(query)
-    data = urllib.request.urlopen(url).read()
-    parsed = json.loads(data)
+    # data = urllib.request.urlopen(url).read()
+    data = urlopen(url).read()
+    
+    #print(type(data))
+    parsed = json.loads(data.decode('utf-8'))
+
     weather = None
     if parsed.get("weather"):
         weather = {'description':parsed['weather'][0]['description'],
@@ -91,10 +96,15 @@ def get_weather(query):
 def get_rate(frm, to):
     all_currency = urllib.request.urlopen(URLS['currency_url']).read()
 
-    parsed = json.loads(all_currency).get('rates')
+    parsed = json.loads(all_currency.decode('utf-8')).get('rates')
     frm_rate = parsed.get(frm.upper())
     to_rate = parsed.get(to.upper())
     return (to_rate/frm_rate, parsed.keys())
+
+
+# @app.errorhandler(Exception)
+# def exception_handler(error):
+#     return "!!!!"  + repr(error)
 
 if __name__ == '__main__':
   app.run(port=5000, debug=True)
